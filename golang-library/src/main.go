@@ -9,7 +9,7 @@ func main() {
 
 //export GenerateGreeting
 func GenerateGreeting(name *C.char) *C.char {
-	greeting := fmt.Sprintf("Hello from Golang, %v!", name)
+	greeting := fmt.Sprintf("Hello from Golang, %v!", C.GoString(name))
 
 	return C.CString(greeting)
 }

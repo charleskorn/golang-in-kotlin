@@ -1,0 +1,3 @@
+package = charleskorn.sample.golanginkotlin.native
+staticLibraries = libgreeting.a
+headers = libgreeting.h
