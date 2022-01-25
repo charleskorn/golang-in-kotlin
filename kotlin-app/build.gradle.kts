@@ -80,3 +80,12 @@ fun KotlinNativeTargetWithHostTests.configureNativeTarget() {
         commandLine(buildDir.resolve("bin").resolve(targetName).resolve("releaseExecutable").resolve("kotlin-app.kexe"))
     }
 }
+
+tasks.register("runNativeApp") {
+    group = "run"
+
+    when (System.getProperty("os.arch")) {
+        "aarch64" -> dependsOn("runMacosArm64")
+        "x86_64" -> dependsOn("runMacosX64")
+    }
+}
