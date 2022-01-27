@@ -41,7 +41,7 @@ jobs:
           restore-keys: kotlin-native-${{ runner.os }}
 
       - name: Run JVM app
-        run: ./gradlew --parallel runJvmApp
+        run: ./gradlew --parallel --stacktrace runJvmApp
 
       - name: Run native app
-        run: ./gradlew --parallel runNativeApp
+        run: ./gradlew --parallel --stacktrace runNativeApp
