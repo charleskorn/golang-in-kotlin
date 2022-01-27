@@ -1,0 +1,47 @@
+name: CI
+on: [push, pull_request]
+env:
+  GRADLE_OPTS: "-Dorg.gradle.internal.launcher.welcomeMessageEnabled=false"
+
+jobs:
+  build:
+    name: Build
+    runs-on: macos-11
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2.4.0
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2.5.0
+        with:
+          java-version: 17
+          distribution: adopt
+
+      - name: Set up Golang
+        uses: actions/setup-go@v2.1.5
+        with:
+          go-version: 1.17.6
+
+      - name: Cache packages
+        id: cache-packages
+        uses: actions/cache@v2.1.7
+        with:
+          path: ~/.gradle/caches
+          key: gradle-packages-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: gradle-wrapper-packages-${{ runner.os }}
+
+      - name: Cache Kotlin/Native dependencies
+        id: cache-kotlin-native
+        uses: actions/cache@v2.1.7
+        with:
+          path: ~/.konan
+          key: kotlin-native-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: kotlin-native-wrapper-${{ runner.os }}
+
+      - name: Run JVM app
+        run: ./gradlew --parallel runJvmApp
+
+      - name: Run native app
+        run: ./gradlew --parallel runNativeApp
