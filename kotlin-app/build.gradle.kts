@@ -38,13 +38,13 @@ kotlin {
 
     sourceSets {
         val jvmMain by getting {
-            val libraryDirectories = sharedLibraryBuildTask.get().outputs.files
-                .filter { it.isFile && it.name.endsWith(".dylib") }
+            val nativeLibraryDirectory = sharedLibraryBuildTask.get().outputs.files
                 .map { it.parentFile }
+                .first()
 
             // FIXME: this copies everything in the output directory to the jar - so we get both the .dylib and the .h file,
             // but we only need the .dylib.
-            resources.srcDir(libraryDirectories)
+            resources.srcDir(nativeLibraryDirectory)
 
             dependencies {
                 implementation("com.github.jnr:jnr-ffi:2.2.11")
@@ -80,18 +80,14 @@ fun KotlinNativeTargetWithHostTests.configureNativeTarget() {
 
     compilations.named("main") {
         cinterops {
-            val headerDirectories = archiveLibraryBuildTask.get().outputs.files
-                .filter { it.isFile && it.name.endsWith(".h") }
+            val nativeLibraryDirectory = archiveLibraryBuildTask.get().outputs.files
                 .map { it.parentFile }
-
-            val libraryDirectories = archiveLibraryBuildTask.get().outputs.files
-                .filter { it.isFile && it.name.endsWith(".a") }
-                .map { it.parentFile }
+                .first()
 
             val libGreeting by creating {
                 defFile(project.file("src/nativeInterop/cinterop/libgreeting.def"))
-                includeDirs(headerDirectories)
-                extraOpts("-libraryPath", libraryDirectories.single())
+                includeDirs(nativeLibraryDirectory)
+                extraOpts("-libraryPath", nativeLibraryDirectory)
             }
 
             tasks.named(libGreeting.interopProcessingTaskName) {

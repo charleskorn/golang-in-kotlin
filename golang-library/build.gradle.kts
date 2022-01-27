@@ -32,3 +32,8 @@ tasks.register("build") {
     dependsOn(buildSharedLib)
     dependsOn(buildArchiveLib)
 }
+
+tasks.register<Delete>("clean") {
+    delete(buildSharedLib)
+    delete(buildArchiveLib)
+}
