@@ -8,7 +8,7 @@ This exists because it's interesting, not because it's a good idea. Please don't
 
 Run the Kotlin/Native app with `./gradlew runNativeApp`.
 
-Run the Kotlin/JVM app with `./gradlew runJvm`.
+Run the Kotlin/JVM app with `./gradlew runJvmApp`.
 
 ## Caveats
 

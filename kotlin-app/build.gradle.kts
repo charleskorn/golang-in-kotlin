@@ -18,7 +18,7 @@ kotlin {
     jvm {
         compilations {
             val main by getting {
-                tasks.register<JavaExec>("runJvm") {
+                tasks.register<JavaExec>("runJvmApp") {
                     group = "run"
 
                     mainClass.set("charleskorn.sample.golanginkotlin.AppKt")
