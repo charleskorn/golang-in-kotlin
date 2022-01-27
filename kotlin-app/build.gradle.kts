@@ -12,7 +12,18 @@ repositories {
 evaluationDependsOn(":golang-library")
 
 kotlin {
-    jvm()
+    jvm {
+        compilations {
+            val main by getting {
+                tasks.register<JavaExec>("runJvm") {
+                    group = "run"
+
+                    mainClass.set("charleskorn.sample.golanginkotlin.AppKt")
+                    classpath = files(tasks.named("jvmJar"))
+                }
+            }
+        }
+    }
 
     macosX64 {
         configureNativeTarget()
