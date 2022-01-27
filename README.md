@@ -2,7 +2,7 @@
 
 A sample app showing how to embed a Golang library in a Kotlin app.
 
-This exists because it's interesting, not because it's a good idea. Please don't do this in your own applications.
+:warning: This exists because it's interesting, not because it's a good idea. Please don't do this in your own applications.
 
 ## Running
 

@@ -30,7 +30,7 @@ jobs:
         with:
           path: ~/.gradle/caches
           key: gradle-packages-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: gradle-wrapper-packages-${{ runner.os }}
+          restore-keys: gradle-packages-${{ runner.os }}
 
       - name: Cache Kotlin/Native dependencies
         id: cache-kotlin-native
@@ -38,7 +38,7 @@ jobs:
         with:
           path: ~/.konan
           key: kotlin-native-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: kotlin-native-wrapper-${{ runner.os }}
+          restore-keys: kotlin-native-${{ runner.os }}
 
       - name: Run JVM app
         run: ./gradlew --parallel runJvmApp
