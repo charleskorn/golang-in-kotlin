@@ -6,7 +6,7 @@ import kotlinx.cinterop.toKString
 
 fun main() {
     println("Hello from Kotlin/Native!")
-    println("Golang says: " + GenerateGreeting("<your name here>".cstr)!!.toKString())
 
-    // FIXME: the above leaks the string pointer returned by Golang
+    // FIXME: this leaks the string pointer returned by Golang
+    println("Golang says: " + GenerateGreeting("<your name here>".cstr)!!.toKString())
 }

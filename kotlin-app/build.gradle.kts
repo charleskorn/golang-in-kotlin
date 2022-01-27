@@ -11,6 +11,9 @@ repositories {
 
 evaluationDependsOn(":golang-library")
 
+val archiveLibraryBuildTask = project(":golang-library").tasks.named("buildArchiveLib")
+val sharedLibraryBuildTask = project(":golang-library").tasks.named("buildSharedLib")
+
 kotlin {
     jvm {
         compilations {
@@ -19,7 +22,7 @@ kotlin {
                     group = "run"
 
                     mainClass.set("charleskorn.sample.golanginkotlin.AppKt")
-                    classpath = files(tasks.named("jvmJar"))
+                    classpath = compileDependencyFiles + runtimeDependencyFiles + output.allOutputs
                 }
             }
         }
@@ -34,6 +37,20 @@ kotlin {
     }
 
     sourceSets {
+        val jvmMain by getting {
+            val libraryDirectories = sharedLibraryBuildTask.get().outputs.files
+                .filter { it.isFile && it.name.endsWith(".dylib") }
+                .map { it.parentFile }
+
+            // FIXME: this copies everything in the output directory to the jar - so we get both the .dylib and the .h file,
+            // but we only need the .dylib.
+            resources.srcDir(libraryDirectories)
+
+            dependencies {
+                implementation("com.github.jnr:jnr-ffi:2.2.11")
+            }
+        }
+
         val nativeMain by creating
 
         val macosMain by creating {
@@ -50,6 +67,10 @@ kotlin {
     }
 }
 
+tasks.named("jvmProcessResources") {
+    dependsOn(sharedLibraryBuildTask)
+}
+
 fun KotlinNativeTargetWithHostTests.configureNativeTarget() {
     binaries {
         executable {
@@ -59,13 +80,11 @@ fun KotlinNativeTargetWithHostTests.configureNativeTarget() {
 
     compilations.named("main") {
         cinterops {
-            val libraryBuildTask = project(":golang-library").tasks.named("buildArchiveLib")
-
-            val headerDirectories = libraryBuildTask.get().outputs.files
+            val headerDirectories = archiveLibraryBuildTask.get().outputs.files
                 .filter { it.isFile && it.name.endsWith(".h") }
                 .map { it.parentFile }
 
-            val libraryDirectories = libraryBuildTask.get().outputs.files
+            val libraryDirectories = archiveLibraryBuildTask.get().outputs.files
                 .filter { it.isFile && it.name.endsWith(".a") }
                 .map { it.parentFile }
 
@@ -76,8 +95,8 @@ fun KotlinNativeTargetWithHostTests.configureNativeTarget() {
             }
 
             tasks.named(libGreeting.interopProcessingTaskName) {
-                dependsOn(libraryBuildTask)
-                inputs.files(libraryBuildTask.get().outputs)
+                dependsOn(archiveLibraryBuildTask)
+                inputs.files(archiveLibraryBuildTask.get().outputs)
             }
         }
     }
