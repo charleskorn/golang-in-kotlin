@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 plugins {
     kotlin("multiplatform") version "1.7.10"
@@ -14,18 +15,7 @@ val archiveLibraryBuildTask = project(":golang-library").tasks.named("buildArchi
 val sharedLibraryBuildTask = project(":golang-library").tasks.named("buildSharedLib")
 
 kotlin {
-    jvm {
-        compilations {
-            val main by getting {
-                tasks.register<JavaExec>("runJvmApp") {
-                    group = "run"
-
-                    mainClass.set("charleskorn.sample.golanginkotlin.AppKt")
-                    classpath = compileDependencyFiles + runtimeDependencyFiles + output.allOutputs
-                }
-            }
-        }
-    }
+    jvm()
 
     macosX64 {
         configureNativeTarget()
@@ -95,6 +85,14 @@ fun KotlinNativeTargetWithHostTests.configureNativeTarget() {
             }
         }
     }
+}
+
+tasks.register<JavaExec>("runJvmApp") {
+    group = "run"
+    mainClass.set("charleskorn.sample.golanginkotlin.AppKt")
+
+    val compilation = kotlin.targets.named<KotlinJvmTarget>("jvm").get().compilations.named("main").get()
+    classpath = compilation.compileDependencyFiles + compilation.runtimeDependencyFiles + compilation.output.allOutputs
 }
 
 tasks.register("runNativeApp") {
