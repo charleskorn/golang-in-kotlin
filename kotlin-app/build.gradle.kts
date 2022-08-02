@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 plugins {
     kotlin("multiplatform") version "1.7.10"
@@ -96,22 +95,14 @@ fun KotlinNativeTargetWithHostTests.configureNativeTarget() {
             }
         }
     }
-
-    val targetName = this.name
-
-    tasks.register<Exec>("run${targetName.capitalizeAsciiOnly()}") {
-        group = "run"
-
-        dependsOn("linkReleaseExecutable${targetName.capitalizeAsciiOnly()}")
-        commandLine(buildDir.resolve("bin").resolve(targetName).resolve("releaseExecutable").resolve("kotlin-app.kexe"))
-    }
 }
 
 tasks.register("runNativeApp") {
     group = "run"
 
-    when (System.getProperty("os.arch")) {
-        "aarch64" -> dependsOn("runMacosArm64")
-        "x86_64" -> dependsOn("runMacosX64")
+    when (val architecture = System.getProperty("os.arch")) {
+        "aarch64" -> dependsOn("runReleaseExecutableMacosArm64")
+        "x86_64" -> dependsOn("runReleaseExecutableMacosX64")
+        else -> throw UnsupportedOperationException("Unknown architecture $architecture")
     }
 }
