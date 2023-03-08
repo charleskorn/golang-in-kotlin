@@ -4,6 +4,14 @@ A sample app showing how to embed a Golang library in a Kotlin app.
 
 :warning: This exists because it's interesting, not because it's a good idea. Please don't do this in your own applications.
 
+## Prerequisites
+
+* macOS host
+* Golang toolchain
+* JVM
+
+See [`ci.yml`](.github/workflows/ci.yml) for the versions of Golang and the JVM that this project has been tested with.
+
 ## Running
 
 Run the Kotlin/Native app with `./gradlew runNativeApp`.
