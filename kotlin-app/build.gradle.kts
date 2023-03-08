@@ -36,7 +36,7 @@ kotlin {
             resources.srcDir(nativeLibraryDirectory)
 
             dependencies {
-                implementation("com.github.jnr:jnr-ffi:2.2.12")
+                implementation("com.github.jnr:jnr-ffi:2.2.13")
             }
         }
 
